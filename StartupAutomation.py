@@ -113,7 +113,7 @@ def press_return():
 
 def press_printscreen():
     '''Presses the print screen key.'''
-    pressKey(win32con.VK_SNAPSHOT)
+    press_key(win32con.VK_SNAPSHOT)
     time.sleep(0.1)
 
 def type_string(text):
