@@ -7,6 +7,8 @@ import win32gui, win32con, win32process, win32api, win32console
 #python -m pip install pypiwin32
 import time
 
+MULI_KEYPRESS_SLEEP_DELAY = 0.1
+
 def run_program(commandLine):
     '''Creates a new process with a new console window.
     
@@ -102,9 +104,9 @@ def press_key(virtualKeyCode):
 def press_shift_something(virtualKeyCode):
     '''Holds shift while pressing a virtual key, for typing capital letters.'''
     win32api.keybd_event(win32con.VK_SHIFT, 0, 0, 0)
-    time.sleep(0.1)
+    time.sleep(MULI_KEYPRESS_SLEEP_DELAY)
     press_key(virtualKeyCode)
-    time.sleep(0.1)
+    time.sleep(MULI_KEYPRESS_SLEEP_DELAY)
     win32api.keybd_event(win32con.VK_SHIFT, 0, 2, 0)
 
 def press_return():
@@ -114,7 +116,7 @@ def press_return():
 def press_printscreen():
     '''Presses the print screen key.'''
     press_key(win32con.VK_SNAPSHOT)
-    time.sleep(0.1)
+    time.sleep(MULI_KEYPRESS_SLEEP_DELAY)
 
 def type_string(text):
     '''Virtually types the text string.
@@ -184,7 +186,7 @@ def type_string(text):
         else:
             print("Can't type '"+char+"' key.", ord(char))
             return False
-        time.sleep(0.1)
+        time.sleep(MULI_KEYPRESS_SLEEP_DELAY)
     return True
 
 def set_cursor(x, y):
