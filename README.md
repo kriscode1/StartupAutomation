@@ -1,7 +1,30 @@
 # StartupAutomation
-Functions for common automation and window repositioning tasks.
+Functions for common automation and window repositioning tasks. 
+
+For example, I like to keep a bandwidth monitor running in the top corner of my screen whenever I turn on my computer. I wrote a python script to run on startup that uses StartupAutomation.py to automatically open and move the window. 
+
+CursorPositionTool.py is a tool to give the screen coordinates at wherever the mouse cursor is placed. 
+
+WindowInfoTool.py is a tool to give the name, position, and size of whichever window the mouse cursor is moved over. 
 
 Windows only, made in python 3. 
+
+## Example Startup Script
+```python
+import StartupAutomation as sa
+import time
+
+# start the desired program
+process_handle = sa.run_program("C:\\SomeProgram.exe")
+time.sleep(1)
+
+# get the window handles for the program
+window_list = sa.get_process_window_handles(process_handle)
+
+# reposition the window where I want it, at (1590, 0)
+# (I know the program only has only one window, and one window handle)
+sa.set_window_coords(window_list[0], 1590, 0)
+```
 
 ## FUNCTIONS
 
