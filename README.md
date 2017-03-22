@@ -7,7 +7,7 @@ CursorPositionTool.py is a tool to give the screen coordinates at wherever the m
 
 WindowInfoTool.py is a tool to give the name, position, and size of whichever window the mouse cursor is moved over. 
 
-Windows only, made in python 3. 
+Windows only, made in python 3. Last update: March 22, 2017.
 
 ## Example Startup Script
 ```python
@@ -72,6 +72,12 @@ sa.set_window_coords(window_list[0], 1590, 0)
     bring_window_to_foreground(window_handle)
         Sets the foreground window to the window of the given handle.
     
+    get_foreground_window()
+        Retrieves the window handle of the foreground window.
+    
+    window_is_foreground(window_handle)
+        Confirms the given window is the foreground window.
+    
     get_parent_window_at_coordinates(x, y)
         Returns the handle of the parent window at (x,y) screen coordinates.
     
@@ -94,11 +100,20 @@ sa.set_window_coords(window_list[0], 1590, 0)
         
         Attempts typing capital letters and special character keys.
     
+    type_string_safely(text, foreground_window_handle)
+        Verifies the foreground window before every virtual keypress.
+    
     press_printscreen()
         Presses the print screen key.
     
     press_return()
-        Presses the enter key.
+        Presses the return key. Same as press_enter().
+    
+    press_enter()
+        Presses the enter key. Same as press_return().
+    
+    press_enter_safely(foreground_window_handle)
+        Verifies the foreground window before pressing the enter key.
     
     press_key(virtual_key_code)
         Presses the given virtual key down and up with no delay.
