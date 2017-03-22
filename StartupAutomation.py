@@ -1,6 +1,7 @@
 '''Functions for common automation and window repositioning tasks.
 
 Author: Kristofer Christakos
+Last modified date: March 22, 2017
 
 Specialized for Windows only.
 '''
@@ -102,6 +103,15 @@ def bring_window_to_foreground(window_handle):
     '''Sets the foreground window to the window of the given handle.'''
     win32gui.SetForegroundWindow(window_handle)
 
+def get_foreground_window():
+    '''Retrieves the window handle of the foreground window.'''
+    return win32gui.GetForegroundWindow()
+
+def window_is_foreground(window_handle):
+    '''Confirms the given window is the foreground window.'''
+    if (window_handle != 0) and (window_handle == get_foreground_window()): return True
+    return False
+
 def get_parent_window_at_coordinates(x, y):
     '''Returns the handle of the parent window at (x,y) screen coordinates.'''
     window_handle = win32gui.WindowFromPoint((x,y))
@@ -151,8 +161,19 @@ def press_key(virtual_key_code):
     win32api.keybd_event(virtual_key_code, 0, 2, 0)
 
 def press_return():
-    '''Presses the enter key.'''
+    '''Presses the return key. Same as press_enter().'''
     press_key(win32con.VK_RETURN)
+
+def press_enter():
+    '''Presses the enter key. Same as press_return().'''
+    press_return()
+
+def press_enter_safely(foreground_window_handle):
+    '''Verifies the foreground window before pressing the enter key.'''
+    if (foreground_window_handle != 0) and window_is_foreground(foreground_window_handle):
+        press_return()
+        return True
+    return False
 
 def press_printscreen():
     '''Presses the print screen key.'''
@@ -236,6 +257,14 @@ def type_string(text):
             print("Can't type '"+char+"' key.", ord(char))
             return False
         time.sleep(MULI_KEYPRESS_SLEEP_DELAY)
+    return True
+
+def type_string_safely(text, foreground_window_handle):
+    '''Verifies the foreground window before every virtual keypress.'''
+    if (foreground_window_handle == 0): return False
+    for char in text:
+        if window_is_foreground(foreground_window_handle): type_string(char)
+        else: return False
     return True
 
 def capslock_on():
