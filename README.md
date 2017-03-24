@@ -7,7 +7,8 @@ CursorPositionTool.py is a tool to give the screen coordinates at wherever the m
 
 WindowInfoTool.py is a tool to give the name, position, and size of whichever window the mouse cursor is moved over. 
 
-Windows only, made in python 3. Last update: March 22, 2017.
+Windows only, made in Python 3. 
+Last update: March 24, 2017.
 
 ## Example Startup Script
 ```python
@@ -35,6 +36,17 @@ sa.set_window_coords(window_list[0], 1590, 0)
 
         Returns the handle to the process.
 
+    get_process_image_name(process_handle)
+        Attempts to retrieve the executable path of the given process.
+        
+        Parameter process_handle must have been created with the PROCESS_QUERY_INFORMATION or at least PROCESS_QUERY_LIMITED_INFORMATION access right. This is automatically true for handles returned by run_program(). Returns an empty string "" on failure. 
+    
+    get_process_id_from_window(window_handle)
+        Gets the PID of the process owning the given window.
+    
+    get_process_image_name_from_window(window_handle)
+        Attempts to retrieve the executable path of the process owning the given window.
+    
 ### Window Related Functions
     
     get_all_window_handles()
@@ -51,6 +63,9 @@ sa.set_window_coords(window_list[0], 1590, 0)
     
     get_window_handle(window_name)
         Returns the window handle for the window with the given title.
+    
+    get_window_handle_multiple_tries(window_name, seconds_to_wait, number_of_attempts)
+        Tries get_window_handle() multiple times, with a time delay between attempts.
     
     get_window_name(window_handle)
         Returns the title of the window with the given window handle.
