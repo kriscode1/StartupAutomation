@@ -1,7 +1,7 @@
 '''Functions for common automation and window repositioning tasks.
 
 Author: Kristofer Christakos
-Last modified date: March 22, 2017
+Last modified date: March 24, 2017
 
 Specialized for Windows only.
 '''
@@ -26,6 +26,66 @@ def run_program(commandLine):
     #Not using os.startfile() because I'd like to return the process handle
     #return os.startfile(path)
     return hProcess
+
+def get_process_image_name(process_handle):
+    '''Attempts to retrieve the executable path of the given process.
+    
+    Parameter process_handle must have been created with the PROCESS_QUERY_INFORMATION or at least PROCESS_QUERY_LIMITED_INFORMATION access right. This is automatically true for handles returned by run_program(). Returns an empty string "" on failure. 
+    '''
+    buffer_size = c_ulong(260)
+    buffer = None
+    loop_count = 0
+    while (loop_count < 2):
+        loop_count += 1
+        #Tries once with a 260-length buffer
+        buffer = create_unicode_buffer(buffer_size.value)
+        ret = windll.kernel32.QueryFullProcessImageNameW(c_ulong(process_handle), c_ulong(0), buffer, byref(buffer_size))
+        print(ret, process_handle, buffer.value, buffer_size.value)
+        if (ret == 0):
+            #Failure
+            last_error_code = GetLastError()
+            if (last_error_code == 5):
+                #ERROR_ACCESS_DENIED
+                return ""
+            elif (last_error_code == 122):
+                #ERROR_INSUFFICIENT_BUFFER
+                #Try one more time with bigger buffer
+                buffer_size = c_ulong(4096)
+            else: return ""
+        else:
+            return buffer.value
+
+def get_process_id_from_window(window_handle):
+    '''Gets the PID of the process owning the given window.'''
+    process_id = c_ulong(0)
+    #Can't use GetProcessHandleFromHwnd() because the handle does not have PROCESS_QUERY_INFORMATION access rights for future calls. So we will work with PIDs instead. 
+    windll.user32.GetWindowThreadProcessId(c_ulong(window_handle), byref(process_id))
+    return process_id.value
+
+def get_process_image_name_from_window(window_handle):
+    '''Attempts to retrieve the executable path of the process owning the given window.'''
+    
+    #Wrapping all this code in one function because the process handle created by OpenProcess() should be closed with CloseHandle()
+    
+    #First get the process_id of the window
+    process_id = get_process_id_from_window(window_handle)
+    if (process_id == 0): return ""
+    
+    #Then use the process_id to get a process_handle with enough privileges
+    #0x0400 = PROCESS_QUERY_INFORMATION
+    #0x1000 = PROCESS_QUERY_LIMITED_INFORMATION
+    process_handle = windll.kernel32.OpenProcess(c_ulong(0x1000), c_bool(False), process_id)
+    if (process_handle == 0):
+        #Failure
+        return ""
+    
+    #Third, get the image name
+    image_name = get_process_image_name(process_handle)
+    
+    #Finally close the process_handle
+    ret = windll.kernel32.CloseHandle(process_handle)
+    #ret == 0 is failure, but return the image_name anyways
+    return image_name
 
 #################### Window Related Functions ####################
 
@@ -62,6 +122,14 @@ def get_current_window_handle():
 def get_window_handle(window_name):
     '''Returns the window handle for the window with the given title.'''
     return win32gui.FindWindow(None, window_name)
+
+def get_window_handle_multiple_tries(window_name, seconds_to_wait, number_of_attempts):
+	'''Tries get_window_handle() multiple times, with a time delay between attempts.'''
+	for attempt in range(number_of_attempts):
+		window_handle = get_window_handle(window_name)
+		time.sleep(seconds_to_wait)
+		if (window_handle != 0): return window_handle
+	return 0
 
 def get_window_name(window_handle):
     '''Returns the title of the window with the given window handle.'''
