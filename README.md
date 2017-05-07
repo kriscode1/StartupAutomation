@@ -1,31 +1,41 @@
-# StartupAutomation
-Functions for common automation and window repositioning tasks. 
+# Purpose
 
-For example, I like to keep a bandwidth monitor running in the top corner of my screen whenever I turn on my computer. I wrote a python script to run on startup that uses StartupAutomation.py to automatically open and move the window. 
+Startup Automation is a library of Python 3 functions used for common automation and window repositioning tasks. 
 
-CursorPositionTool.py is a tool to give the screen coordinates at wherever the mouse cursor is placed. 
+For example, I like to keep a [bandwidth monitor][bm] running in the top corner of my screen whenever I turn on my computer. I wrote a Python script to run on startup that uses StartupAutomation.py to automatically open and move the window. 
 
-WindowInfoTool.py is a tool to give the name, position, and size of whichever window the mouse cursor is moved over. 
+[bm]: http://kriscoder.com/projects/spotbottle "Spot Bottle - command line resource monitor for spotting bottlenecks"
 
-Windows only, made in Python 3. 
-Last update: March 24, 2017.
+Also included with StartupAutomation:
 
-## Example Startup Script
-```python
-import StartupAutomation as sa
-import time
+* CursorPositionTool.py is a tool to give the screen coordinates at wherever the mouse cursor is placed. 
+* WindowInfoTool.py is a tool to give the name, position, and size of whichever window the mouse cursor is moved over. 
 
-# start the desired program
-process_handle = sa.run_program("C:\\SomeProgram.exe")
-time.sleep(1)
+# Example Startup Script
 
-# get the window handles for the program
-window_list = sa.get_process_window_handles(process_handle)
+    import StartupAutomation as sa
+    import time
+    
+    # start the desired program
+    process_handle = sa.run_program("C:\\SomeProgram.exe")
+    time.sleep(1)
+    
+    # get the window handles for the program
+    window_list = sa.get_process_window_handles(process_handle)
+    
+    # reposition the window where I want it, at (1590, 0)
+    # (I know the program only has only one window, and one window handle)
+    sa.set_window_coords(window_list[0], 1590, 0)
 
-# reposition the window where I want it, at (1590, 0)
-# (I know the program only has only one window, and one window handle)
-sa.set_window_coords(window_list[0], 1590, 0)
-```
+# Build Notes
+
+* For Microsoft Windows only
+* Written in Python 3
+* Must install the pypiwin32 module first:
+
+        python -m pip install pypiwin32
+
+# API
 
 ## FUNCTIONS
 
@@ -151,3 +161,9 @@ sa.set_window_coords(window_list[0], 1590, 0)
 
 ## DATA
     MULI_KEYPRESS_SLEEP_DELAY = 0.1
+
+# Improvements
+
+Please feel free to contribute to this library on Github: <https://github.com/kriscode1/StartupAutomation>
+
+If you find this library useful, I'd like to hear about it too.
